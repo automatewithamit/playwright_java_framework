@@ -5,24 +5,39 @@ import com.playwright.utils.ConfigReader;
 import java.util.Locale;
 
 /**
- * Thread-safe browser management using ThreadLocal.
- * Each test thread gets its own Playwright → Browser → Context → Page chain.
- * This enables safe parallel test execution.
+ * Thread-safe browser management using Playwright's BrowserContext isolation.
+ *
+ * Architecture:
+ *   Playwright + Browser  → shared, launched once per suite
+ *   BrowserContext + Page  → isolated per thread/test via ThreadLocal
+ *
+ * Each BrowserContext has its own cookies, localStorage, and session —
+ * no state leaks between parallel tests.
  */
 public class WebDriverManager {
 
-    private static final ThreadLocal<Playwright> playwrightThreadLocal = new ThreadLocal<>();
-    private static final ThreadLocal<Browser> browserThreadLocal = new ThreadLocal<>();
+    // Shared across all threads — launched once
+    private static Playwright playwright;
+    private static Browser browser;
+
+    // Isolated per thread — created per test
     private static final ThreadLocal<BrowserContext> contextThreadLocal = new ThreadLocal<>();
     private static final ThreadLocal<Page> pageThreadLocal = new ThreadLocal<>();
 
-    public static void initializeBrowser(String browserName) {
+    /**
+     * Launches Playwright and Browser once for the entire suite.
+     * Call this in @BeforeSuite.
+     */
+    public static synchronized void launchBrowser(String browserName) {
+        if (browser != null) {
+            return; // already launched
+        }
+
         if (browserName == null || browserName.trim().isEmpty()) {
             browserName = "chrome";
         }
 
-        Playwright playwright = Playwright.create();
-        playwrightThreadLocal.set(playwright);
+        playwright = Playwright.create();
 
         boolean headless = Boolean.parseBoolean(ConfigReader.getProperty("headless", "false"));
 
@@ -30,7 +45,6 @@ public class WebDriverManager {
                 .setHeadless(headless)
                 .setSlowMo(500);
 
-        Browser browser;
         switch (browserName.toLowerCase(Locale.ROOT)) {
             case "chrome":
             case "chromium":
@@ -47,7 +61,18 @@ public class WebDriverManager {
                 System.out.println("Browser not supported: " + browserName + ". Using Chrome as default.");
                 browser = playwright.chromium().launch(launchOptions);
         }
-        browserThreadLocal.set(browser);
+
+        System.out.println("Browser launched: " + browserName);
+    }
+
+    /**
+     * Creates a new isolated BrowserContext and Page for the current thread.
+     * Call this in @BeforeMethod.
+     */
+    public static void createContext() {
+        if (browser == null) {
+            throw new RuntimeException("Browser not launched. Call launchBrowser() first.");
+        }
 
         BrowserContext context = browser.newContext(new Browser.NewContextOptions()
                 .setViewportSize(1920, 1080));
@@ -56,13 +81,13 @@ public class WebDriverManager {
         Page page = context.newPage();
         pageThreadLocal.set(page);
 
-        System.out.println("[" + Thread.currentThread().getName() + "] Browser initialized: " + browserName);
+        System.out.println("[" + Thread.currentThread().getName() + "] New context created");
     }
 
     public static Page getPage() {
         Page page = pageThreadLocal.get();
         if (page == null) {
-            throw new RuntimeException("Browser not initialized. Call initializeBrowser() first.");
+            throw new RuntimeException("Context not created. Call createContext() first.");
         }
         return page;
     }
@@ -79,7 +104,11 @@ public class WebDriverManager {
         System.out.println("[" + Thread.currentThread().getName() + "] Navigated to: " + url);
     }
 
-    public static void closeBrowser() {
+    /**
+     * Closes the current thread's BrowserContext and Page.
+     * Call this in @AfterMethod.
+     */
+    public static void closeContext() {
         try {
             Page page = pageThreadLocal.get();
             if (page != null) {
@@ -93,21 +122,29 @@ public class WebDriverManager {
                 contextThreadLocal.remove();
             }
 
-            Browser browser = browserThreadLocal.get();
+            System.out.println("[" + Thread.currentThread().getName() + "] Context closed");
+        } catch (Exception e) {
+            System.err.println("[" + Thread.currentThread().getName() + "] Error closing context: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Shuts down the shared Browser and Playwright instance.
+     * Call this in @AfterSuite.
+     */
+    public static synchronized void quitBrowser() {
+        try {
             if (browser != null) {
                 browser.close();
-                browserThreadLocal.remove();
+                browser = null;
             }
-
-            Playwright playwright = playwrightThreadLocal.get();
             if (playwright != null) {
                 playwright.close();
-                playwrightThreadLocal.remove();
+                playwright = null;
             }
-
-            System.out.println("[" + Thread.currentThread().getName() + "] Browser closed successfully");
+            System.out.println("Browser and Playwright shut down");
         } catch (Exception e) {
-            System.err.println("[" + Thread.currentThread().getName() + "] Error closing browser: " + e.getMessage());
+            System.err.println("Error shutting down browser: " + e.getMessage());
         }
     }
 }
