@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suite name="YatraTestSuite">
+    <test name="FrameworkValidation">
+        <classes>
+            <class name="com.yatra.tests.FrameworkValidationTest"/>
+        </classes>
+    </test>
+    <test name="YatraFunctionalTests">
+        <classes>
+            <class name="com.yatra.tests.FlightSearchTest"/>
+        </classes>
+    </test>
+</suite>
