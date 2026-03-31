@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<suite name="YatraTestSuite">
+<suite name="YatraTestSuite" parallel="methods" thread-count="3">
+
+    <listeners>
+        <listener class-name="com.playwright.listeners.RetryTransformer"/>
+    </listeners>
+
     <test name="FrameworkValidation">
         <classes>
             <class name="com.yatra.tests.FrameworkValidationTest"/>
