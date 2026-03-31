@@ -1,0 +1,20 @@
+{
+  "hotelSearchTests": [
+    {
+      "testName": "Goa Hotel Search",
+      "destination": "Goa",
+      "checkInDate": "2025-03-15",
+      "checkOutDate": "2025-03-18",
+      "rooms": 1,
+      "guests": 2
+    },
+    {
+      "testName": "Manali Hotel Search",
+      "destination": "Manali",
+      "checkInDate": "2025-04-10",
+      "checkOutDate": "2025-04-14",
+      "rooms": 2,
+      "guests": 4
+    }
+  ]
+}

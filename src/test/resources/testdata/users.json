@@ -1,0 +1,18 @@
+{
+  "users": [
+    {
+      "testName": "Standard User Login",
+      "email": "testuser@example.com",
+      "phone": "9876543210",
+      "firstName": "Test",
+      "lastName": "User"
+    },
+    {
+      "testName": "Premium User Login",
+      "email": "premiumuser@example.com",
+      "phone": "9876543211",
+      "firstName": "Premium",
+      "lastName": "User"
+    }
+  ]
+}

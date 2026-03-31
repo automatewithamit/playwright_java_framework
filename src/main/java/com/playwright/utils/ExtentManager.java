@@ -27,6 +27,9 @@ public class ExtentManager {
             extent.setSystemInfo("OS", System.getProperty("os.name"));
             extent.setSystemInfo("Java Version", System.getProperty("java.version"));
             extent.setSystemInfo("User", System.getProperty("user.name"));
+            extent.setSystemInfo("Environment", ConfigReader.getEnvironment());
+            extent.setSystemInfo("Browser", ConfigReader.getProperty("browser"));
+            extent.setSystemInfo("Base URL", ConfigReader.getProperty("url"));
             
             System.out.println("ExtentReports initialized successfully");
         }

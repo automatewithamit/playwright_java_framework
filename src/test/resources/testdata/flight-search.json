@@ -1,0 +1,28 @@
+{
+  "flightSearchTests": [
+    {
+      "testName": "Delhi to Mumbai Flight Search",
+      "departureCity": "Delhi",
+      "arrivalCity": "Mumbai",
+      "adults": 2,
+      "children": 0,
+      "infants": 0
+    },
+    {
+      "testName": "Bangalore to Chennai Flight Search",
+      "departureCity": "Bangalore",
+      "arrivalCity": "Chennai",
+      "adults": 1,
+      "children": 1,
+      "infants": 0
+    },
+    {
+      "testName": "Kolkata to Goa Flight Search",
+      "departureCity": "Kolkata",
+      "arrivalCity": "Goa",
+      "adults": 3,
+      "children": 0,
+      "infants": 1
+    }
+  ]
+}
