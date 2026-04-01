@@ -5,57 +5,66 @@ import com.aventstack.extentreports.Status;
 import com.microsoft.playwright.PlaywrightException;
 import com.playwright.core.WebDriverManager;
 import com.playwright.utils.ExtentManager;
+import com.playwright.utils.JsonDataReader;
 import com.yatra.pages.FlightResultsPage;
 import com.yatra.pages.FlightSearchPage;
 import com.yatra.pages.HomePage;
 import org.testng.Assert;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+
+import java.util.Map;
 
 public class FlightSearchTest extends BaseTest {
 
-    @Test(priority = 1)
-    public void testFlightSearch() {
-        ExtentTest test = ExtentManager.createTest("Flight Search Test");
-        
+    @DataProvider(name = "flightData")
+    public Object[][] flightData() {
+        return JsonDataReader.getTestData("flight-search.json", "flightSearchTests");
+    }
+
+    @Test(dataProvider = "flightData")
+    public void testFlightSearch(Map<String, Object> data) {
+        String testName = (String) data.get("testName");
+        String departureCity = (String) data.get("departureCity");
+        String arrivalCity = (String) data.get("arrivalCity");
+        int adults = (int) data.get("adults");
+        int children = (int) data.get("children");
+        int infants = (int) data.get("infants");
+
+        ExtentTest test = ExtentManager.createTest(testName);
+
         try {
             HomePage homePage = new HomePage(WebDriverManager.getPage());
             test.log(Status.INFO, "Navigated to Yatra homepage");
-            
-            // Close login popup if present
+
             homePage.closeLoginPopupIfPresent();
-            test.log(Status.INFO, "Closed login popup if present");
-            
-            // Select Flights tab
+
             homePage.selectTab("Flights");
             test.log(Status.INFO, "Selected Flights tab");
-            
+
             FlightSearchPage flightSearchPage = homePage.getFlightSearchPage();
-            
-            // Enter flight search details
-            flightSearchPage.enterDepartureCity("Delhi");
-            test.log(Status.INFO, "Entered departure city: Delhi");
-            
-            flightSearchPage.enterArrivalCity("Mumbai");
-            test.log(Status.INFO, "Entered arrival city: Mumbai");
-            
-            // Select passengers
-            flightSearchPage.selectPassengers(2, 0, 0);
-            test.log(Status.INFO, "Selected 2 adult passengers");
-            
-            // Search flights
+
+            flightSearchPage.enterDepartureCity(departureCity);
+            test.log(Status.INFO, "Entered departure city: " + departureCity);
+
+            flightSearchPage.enterArrivalCity(arrivalCity);
+            test.log(Status.INFO, "Entered arrival city: " + arrivalCity);
+
+            flightSearchPage.selectPassengers(adults, children, infants);
+            test.log(Status.INFO, "Selected passengers - Adults: " + adults
+                    + ", Children: " + children + ", Infants: " + infants);
+
             flightSearchPage.clickSearchFlights();
             test.log(Status.INFO, "Clicked search flights button");
-            
-            // Wait for results page
+
             WebDriverManager.getPage().waitForTimeout(5000);
-            
+
             FlightResultsPage resultsPage = new FlightResultsPage(WebDriverManager.getPage());
-            
-            // Verify results are displayed
-            Assert.assertTrue(resultsPage.areFlightResultsDisplayed(), 
+
+            Assert.assertTrue(resultsPage.areFlightResultsDisplayed(),
                 "Flight results should be displayed");
-            test.log(Status.PASS, "Flight search completed successfully");
-            
+            test.log(Status.PASS, testName + " completed successfully");
+
         } catch (PlaywrightException e) {
             test.log(Status.FAIL, "Playwright error: " + e.getMessage());
             Assert.fail("Playwright error: " + e.getMessage());
@@ -68,18 +77,16 @@ public class FlightSearchTest extends BaseTest {
     @Test(priority = 2)
     public void testHotelSearch() {
         ExtentTest test = ExtentManager.createTest("Hotel Search Test");
-        
+
         try {
             HomePage homePage = new HomePage(WebDriverManager.getPage());
             test.log(Status.INFO, "Navigated to Yatra homepage");
-            
-            // Close login popup if present
+
             homePage.closeLoginPopupIfPresent();
-            
-            // Select Hotels tab
+
             homePage.selectTab("Hotels");
             test.log(Status.PASS, "Hotel tab selection test passed");
-            
+
         } catch (PlaywrightException e) {
             test.log(Status.FAIL, "Playwright error: " + e.getMessage());
             Assert.fail("Playwright error: " + e.getMessage());
@@ -92,18 +99,16 @@ public class FlightSearchTest extends BaseTest {
     @Test(priority = 3)
     public void testHolidayPackages() {
         ExtentTest test = ExtentManager.createTest("Holiday Packages Test");
-        
+
         try {
             HomePage homePage = new HomePage(WebDriverManager.getPage());
             test.log(Status.INFO, "Navigated to Yatra homepage");
-            
-            // Close login popup if present
+
             homePage.closeLoginPopupIfPresent();
-            
-            // Select Holiday Packages tab
+
             homePage.selectTab("Holiday Packages");
             test.log(Status.PASS, "Holiday Packages tab selection test passed");
-            
+
         } catch (PlaywrightException e) {
             test.log(Status.FAIL, "Playwright error: " + e.getMessage());
             Assert.fail("Playwright error: " + e.getMessage());
