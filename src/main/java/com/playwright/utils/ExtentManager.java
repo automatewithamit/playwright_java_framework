@@ -6,33 +6,38 @@ import com.aventstack.extentreports.reporter.ExtentSparkReporter;
 
 import java.io.File;
 
+/**
+ * Thread-safe ExtentReports manager.
+ * - ExtentReports instance is shared (it's internally thread-safe for writing)
+ * - ExtentTest is per-thread via ThreadLocal
+ * - Initialization is synchronized to prevent race conditions
+ */
 public class ExtentManager {
     private static ExtentReports extent;
-    private static ThreadLocal<ExtentTest> test = new ThreadLocal<>();
+    private static final ThreadLocal<ExtentTest> test = new ThreadLocal<>();
 
-    public static void initializeExtentReports() {
+    public static synchronized void initializeExtentReports() {
         if (extent == null) {
-            // Create test-output directory if it doesn't exist
             File testOutputDir = new File("test-output");
             if (!testOutputDir.exists()) {
                 testOutputDir.mkdirs();
             }
-            
+
             ExtentSparkReporter sparkReporter = new ExtentSparkReporter("test-output/ExtentReport.html");
             sparkReporter.config().setDocumentTitle("Yatra Test Automation Report");
             sparkReporter.config().setReportName("Yatra Functional Testing");
-            
+
             extent = new ExtentReports();
             extent.attachReporter(sparkReporter);
             extent.setSystemInfo("OS", System.getProperty("os.name"));
             extent.setSystemInfo("Java Version", System.getProperty("java.version"));
             extent.setSystemInfo("User", System.getProperty("user.name"));
-            
+
             System.out.println("ExtentReports initialized successfully");
         }
     }
 
-    public static ExtentTest createTest(String testName) {
+    public static synchronized ExtentTest createTest(String testName) {
         if (extent == null) {
             initializeExtentReports();
         }
@@ -45,7 +50,7 @@ public class ExtentManager {
         return test.get();
     }
 
-    public static void flushReports() {
+    public static synchronized void flushReports() {
         if (extent != null) {
             extent.flush();
             System.out.println("ExtentReports flushed successfully");

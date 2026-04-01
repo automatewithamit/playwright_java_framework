@@ -9,28 +9,27 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 
 public class BaseTest {
-    
+
     @BeforeSuite
     public void suiteSetup() {
         ExtentManager.initializeExtentReports();
+        WebDriverManager.launchBrowser(ConfigReader.getProperty("browser"));
     }
 
     @BeforeMethod
     public void setUp() {
-        String browser = ConfigReader.getProperty("browser");
-        String url = ConfigReader.getProperty("url");
-        
-        WebDriverManager.initializeBrowser(browser);
-        WebDriverManager.navigateTo(url);
+        WebDriverManager.createContext();
+        WebDriverManager.navigateTo(ConfigReader.getProperty("url"));
     }
 
     @AfterMethod
     public void tearDown() {
-        WebDriverManager.closeBrowser();
+        WebDriverManager.closeContext();
     }
 
     @AfterSuite
     public void suiteTearDown() {
+        WebDriverManager.quitBrowser();
         ExtentManager.flushReports();
     }
 }
