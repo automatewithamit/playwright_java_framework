@@ -12,7 +12,7 @@ import java.util.Map;
 /**
  * Reads JSON test data files from src/test/resources/testdata/.
  *
- * Usage in tests with TestNG DataProvider:
+ * Usage with TestNG DataProvider:
  *
  *   @DataProvider
  *   public Object[][] flightData() {
@@ -22,7 +22,6 @@ import java.util.Map;
  *   @Test(dataProvider = "flightData")
  *   public void testFlight(Map<String, Object> data) {
  *       String city = (String) data.get("departureCity");
- *       int adults = (int) data.get("adults");
  *   }
  */
 public class JsonDataReader {
@@ -30,13 +29,6 @@ public class JsonDataReader {
     private static final ObjectMapper mapper = new ObjectMapper();
     private static final String TEST_DATA_PATH = "testdata/";
 
-    /**
-     * Reads a JSON array from a file and returns it as TestNG DataProvider format.
-     *
-     * @param fileName  JSON file name under testdata/ (e.g. "flight-search.json")
-     * @param arrayKey  Key of the JSON array (e.g. "flightSearchTests")
-     * @return Object[][] where each row is a Map<String, Object> of one test case
-     */
     public static Object[][] getTestData(String fileName, String arrayKey) {
         try {
             JsonNode rootNode = readJsonFile(fileName);
@@ -75,10 +67,6 @@ public class JsonDataReader {
         }
     }
 
-    /**
-     * Reads a single JSON object by key from a file.
-     * Useful for getting a specific test case by index.
-     */
     public static Map<String, Object> getTestDataByIndex(String fileName, String arrayKey, int index) {
         Object[][] allData = getTestData(fileName, arrayKey);
         if (index >= allData.length) {
@@ -87,9 +75,6 @@ public class JsonDataReader {
         return (Map<String, Object>) allData[index][0];
     }
 
-    /**
-     * Reads the entire JSON file as a JsonNode tree.
-     */
     private static JsonNode readJsonFile(String fileName) {
         String filePath = TEST_DATA_PATH + fileName;
         try (InputStream is = JsonDataReader.class.getClassLoader().getResourceAsStream(filePath)) {

@@ -10,9 +10,6 @@ import java.util.Locale;
  * Architecture:
  *   Playwright + Browser  → shared, launched once per suite
  *   BrowserContext + Page  → isolated per thread/test via ThreadLocal
- *
- * Each BrowserContext has its own cookies, localStorage, and session —
- * no state leaks between parallel tests.
  */
 public class WebDriverManager {
 
@@ -30,7 +27,7 @@ public class WebDriverManager {
      */
     public static synchronized void launchBrowser(String browserName) {
         if (browser != null) {
-            return; // already launched
+            return;
         }
 
         if (browserName == null || browserName.trim().isEmpty()) {
