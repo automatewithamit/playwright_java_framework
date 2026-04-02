@@ -1,16 +1,17 @@
 package com.playwright.listeners;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.testng.IRetryAnalyzer;
 import org.testng.ITestResult;
 
 /**
  * Auto-retries failed tests up to MAX_RETRY times.
- * Helps handle flaky tests caused by network issues, timing, etc.
- *
  * Applied automatically to all tests via RetryTransformer.
  */
 public class RetryAnalyzer implements IRetryAnalyzer {
 
+    private static final Logger logger = LogManager.getLogger(RetryAnalyzer.class);
     private static final int MAX_RETRY = 1;
     private int retryCount = 0;
 
@@ -18,8 +19,8 @@ public class RetryAnalyzer implements IRetryAnalyzer {
     public boolean retry(ITestResult result) {
         if (retryCount < MAX_RETRY) {
             retryCount++;
-            System.out.println("[RETRY] " + result.getMethod().getMethodName()
-                    + " - Attempt " + (retryCount + 1) + " of " + (MAX_RETRY + 1));
+            logger.warn("RETRY: {} — Attempt {} of {}",
+                    result.getMethod().getMethodName(), retryCount + 1, MAX_RETRY + 1);
             return true;
         }
         return false;

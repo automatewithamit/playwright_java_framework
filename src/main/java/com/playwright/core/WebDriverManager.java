@@ -2,6 +2,9 @@ package com.playwright.core;
 
 import com.microsoft.playwright.*;
 import com.playwright.utils.ConfigReader;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.util.Locale;
 
 /**
@@ -12,6 +15,8 @@ import java.util.Locale;
  *   BrowserContext + Page  → isolated per thread/test via ThreadLocal
  */
 public class WebDriverManager {
+
+    private static final Logger logger = LogManager.getLogger(WebDriverManager.class);
 
     // Shared across all threads — launched once
     private static Playwright playwright;
@@ -55,11 +60,11 @@ public class WebDriverManager {
                 browser = playwright.webkit().launch(launchOptions);
                 break;
             default:
-                System.out.println("Browser not supported: " + browserName + ". Using Chrome as default.");
+                logger.warn("Browser not supported: {}. Using Chrome as default.", browserName);
                 browser = playwright.chromium().launch(launchOptions);
         }
 
-        System.out.println("Browser launched: " + browserName);
+        logger.info("Browser launched: {} (headless={})", browserName, headless);
     }
 
     /**
@@ -78,7 +83,7 @@ public class WebDriverManager {
         Page page = context.newPage();
         pageThreadLocal.set(page);
 
-        System.out.println("[" + Thread.currentThread().getName() + "] New context created");
+        logger.debug("New context created");
     }
 
     public static Page getPage() {
@@ -98,7 +103,7 @@ public class WebDriverManager {
             throw new IllegalArgumentException("URL cannot be null or empty");
         }
         getPage().navigate(url);
-        System.out.println("[" + Thread.currentThread().getName() + "] Navigated to: " + url);
+        logger.info("Navigated to: {}", url);
     }
 
     /**
@@ -119,9 +124,9 @@ public class WebDriverManager {
                 contextThreadLocal.remove();
             }
 
-            System.out.println("[" + Thread.currentThread().getName() + "] Context closed");
+            logger.debug("Context closed");
         } catch (Exception e) {
-            System.err.println("[" + Thread.currentThread().getName() + "] Error closing context: " + e.getMessage());
+            logger.error("Error closing context: {}", e.getMessage(), e);
         }
     }
 
@@ -139,9 +144,9 @@ public class WebDriverManager {
                 playwright.close();
                 playwright = null;
             }
-            System.out.println("Browser and Playwright shut down");
+            logger.info("Browser and Playwright shut down");
         } catch (Exception e) {
-            System.err.println("Error shutting down browser: " + e.getMessage());
+            logger.error("Error shutting down browser: {}", e.getMessage(), e);
         }
     }
 }

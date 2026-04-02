@@ -15,6 +15,7 @@
         <playwright.version>1.57.0</playwright.version>
         <testng.version>7.8.0</testng.version>
         <extentreports.version>5.1.1</extentreports.version>
+        <log4j2.version>2.24.3</log4j2.version>
     </properties>
     <dependencies>
         <dependency>
@@ -36,6 +37,16 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>2.15.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>${log4j2.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>${log4j2.version}</version>
         </dependency>
     </dependencies>
     <build>

@@ -3,6 +3,8 @@ package com.playwright.utils;
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.reporter.ExtentSparkReporter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 
@@ -13,6 +15,8 @@ import java.io.File;
  * - Initialization is synchronized to prevent race conditions
  */
 public class ExtentManager {
+
+    private static final Logger logger = LogManager.getLogger(ExtentManager.class);
     private static ExtentReports extent;
     private static final ThreadLocal<ExtentTest> test = new ThreadLocal<>();
 
@@ -36,7 +40,7 @@ public class ExtentManager {
             extent.setSystemInfo("Browser", ConfigReader.getProperty("browser"));
             extent.setSystemInfo("Base URL", ConfigReader.getProperty("url"));
 
-            System.out.println("ExtentReports initialized successfully");
+            logger.info("ExtentReports initialized successfully");
         }
     }
 
@@ -56,7 +60,7 @@ public class ExtentManager {
     public static synchronized void flushReports() {
         if (extent != null) {
             extent.flush();
-            System.out.println("ExtentReports flushed successfully");
+            logger.info("ExtentReports flushed — report available at test-output/ExtentReport.html");
         }
     }
 }

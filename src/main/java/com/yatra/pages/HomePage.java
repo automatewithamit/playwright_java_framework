@@ -4,10 +4,14 @@ import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import com.microsoft.playwright.options.AriaRole;
 import com.playwright.core.BasePage;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.regex.Pattern;
 
 public class HomePage extends BasePage {
+
+    private static final Logger logger = LogManager.getLogger(HomePage.class);
 
     public HomePage(Page page) {
         super(page);
@@ -32,7 +36,7 @@ public class HomePage extends BasePage {
                         new Locator.GetByRoleOptions()
                                     .setName(Pattern.compile(name, Pattern.CASE_INSENSITIVE))
                 ).click();
-        System.out.println("Successfully clicked on tab: " + tabName);
+        logger.info("Selected tab: {}", tabName);
     }
 
     public void closeLoginPopupIfPresent() {
@@ -43,10 +47,10 @@ public class HomePage extends BasePage {
                         .filter(new Locator.FilterOptions()
                                 .setHasText("Email Id / Mobile Number"))
                         .getByAltText("cross").click();
-                System.out.println("Closed login popup successfully");
+                logger.info("Closed login popup");
             }
         } catch (Exception e) {
-            System.out.println("No login popup found or unable to close: " + e.getMessage());
+            logger.debug("No login popup found: {}", e.getMessage());
         }
     }
 

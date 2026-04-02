@@ -1,5 +1,8 @@
 package com.playwright.utils;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -11,14 +14,10 @@ import java.util.Properties;
  * 1. System property override  → -Dbrowser=firefox (highest priority)
  * 2. Environment config file   → config-{env}.properties
  * 3. Default config file       → config.properties (fallback)
- *
- * Usage:
- *   mvn test                          → loads config.properties (default/dev)
- *   mvn test -Denv=staging            → loads config-staging.properties
- *   mvn test -Denv=prod               → loads config-prod.properties
- *   mvn test -Denv=staging -Dbrowser=firefox  → staging config + firefox override
  */
 public class ConfigReader {
+
+    private static final Logger logger = LogManager.getLogger(ConfigReader.class);
     private static Properties properties;
 
     static {
@@ -28,18 +27,16 @@ public class ConfigReader {
     private static void loadProperties() {
         properties = new Properties();
 
-        // Determine environment from system property, default to "dev"
         String env = System.getProperty("env", "dev");
         String configFile = "config-" + env + ".properties";
 
-        // Try environment-specific config first, fallback to default
         InputStream inputStream = ConfigReader.class.getClassLoader().getResourceAsStream(configFile);
 
         if (inputStream == null) {
-            System.out.println("Config file '" + configFile + "' not found, falling back to config.properties");
+            logger.warn("Config file '{}' not found, falling back to config.properties", configFile);
             inputStream = ConfigReader.class.getClassLoader().getResourceAsStream("config.properties");
         } else {
-            System.out.println("Loaded environment config: " + configFile);
+            logger.info("Loaded environment config: {}", configFile);
         }
 
         if (inputStream == null) {
@@ -53,12 +50,7 @@ public class ConfigReader {
         }
     }
 
-    /**
-     * Gets a property value. System properties (-D flags) take highest priority,
-     * then environment config file, then default config.
-     */
     public static String getProperty(String key) {
-        // System property override takes priority
         String systemValue = System.getProperty(key);
         if (systemValue != null) {
             return systemValue;
