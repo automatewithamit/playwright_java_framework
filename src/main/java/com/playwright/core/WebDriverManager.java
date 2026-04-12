@@ -1,10 +1,13 @@
 package com.playwright.core;
 
 import com.microsoft.playwright.*;
+import com.microsoft.playwright.Tracing;
 import com.playwright.utils.ConfigReader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Locale;
 
 /**
@@ -69,6 +72,7 @@ public class WebDriverManager {
 
     /**
      * Creates a new isolated BrowserContext and Page for the current thread.
+     * Starts tracing if enabled in config.
      * Call this in @BeforeMethod.
      */
     public static void createContext() {
@@ -80,10 +84,18 @@ public class WebDriverManager {
                 .setViewportSize(1920, 1080));
         contextThreadLocal.set(context);
 
+        if (Boolean.parseBoolean(ConfigReader.getProperty("tracing", "false"))) {
+            context.tracing().start(new Tracing.StartOptions()
+                    .setScreenshots(true)
+                    .setSnapshots(true)
+                    .setSources(false));
+        }
+
         Page page = context.newPage();
         pageThreadLocal.set(page);
 
-        logger.debug("New context created");
+        logger.debug("New context created (tracing={})",
+                ConfigReader.getProperty("tracing", "false"));
     }
 
     public static Page getPage() {
@@ -104,6 +116,39 @@ public class WebDriverManager {
         }
         getPage().navigate(url);
         logger.info("Navigated to: {}", url);
+    }
+
+    /**
+     * Stops tracing and saves the trace file for the given test.
+     * Call this from TestListener on failure, or whenever you want to save a trace.
+     */
+    public static void stopTracingAndSave(String testName) {
+        try {
+            BrowserContext context = contextThreadLocal.get();
+            if (context != null && Boolean.parseBoolean(ConfigReader.getProperty("tracing", "false"))) {
+                String safeName = testName.replaceAll("[^a-zA-Z0-9]", "_");
+                Path tracePath = Paths.get("test-output", "traces", safeName + ".zip");
+                tracePath.getParent().toFile().mkdirs();
+                context.tracing().stop(new Tracing.StopOptions().setPath(tracePath));
+                logger.info("Trace saved: {}", tracePath);
+            }
+        } catch (Exception e) {
+            logger.error("Failed to save trace: {}", e.getMessage());
+        }
+    }
+
+    /**
+     * Stops tracing without saving (for passed tests when tracing.onFailureOnly=true).
+     */
+    public static void stopTracingWithoutSave() {
+        try {
+            BrowserContext context = contextThreadLocal.get();
+            if (context != null && Boolean.parseBoolean(ConfigReader.getProperty("tracing", "false"))) {
+                context.tracing().stop();
+            }
+        } catch (Exception e) {
+            logger.debug("Tracing stop (no save): {}", e.getMessage());
+        }
     }
 
     /**

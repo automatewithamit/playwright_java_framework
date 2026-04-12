@@ -35,6 +35,7 @@ public class TestListener implements ITestListener {
     @Override
     public void onTestSuccess(ITestResult result) {
         String testName = getTestName(result);
+        WebDriverManager.stopTracingWithoutSave();
         ExtentManager.getTest().log(Status.PASS, testName + " PASSED");
         logger.info("PASSED: {}", testName);
     }
@@ -46,6 +47,8 @@ public class TestListener implements ITestListener {
 
         extentTest.log(Status.FAIL, testName + " FAILED");
         extentTest.log(Status.FAIL, result.getThrowable().getMessage());
+
+        WebDriverManager.stopTracingAndSave(testName);
 
         try {
             byte[] screenshotBytes = WebDriverManager.getPage()
