@@ -15,4 +15,9 @@
             <class name="com.yatra.tests.FlightSearchTest"/>
         </classes>
     </test>
+    <test name="ApiTests">
+        <classes>
+            <class name="com.yatra.tests.api.SampleApiTest"/>
+        </classes>
+    </test>
 </suite>

@@ -5,6 +5,7 @@ import com.aventstack.extentreports.MediaEntityBuilder;
 import com.aventstack.extentreports.Status;
 import com.playwright.core.WebDriverManager;
 import com.playwright.utils.ExtentManager;
+import com.microsoft.playwright.Page;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.testng.ITestContext;
@@ -35,7 +36,9 @@ public class TestListener implements ITestListener {
     @Override
     public void onTestSuccess(ITestResult result) {
         String testName = getTestName(result);
-        WebDriverManager.stopTracingWithoutSave();
+        if (hasActivePage()) {
+            WebDriverManager.stopTracingWithoutSave();
+        }
         ExtentManager.getTest().log(Status.PASS, testName + " PASSED");
         logger.info("PASSED: {}", testName);
     }
@@ -48,25 +51,11 @@ public class TestListener implements ITestListener {
         extentTest.log(Status.FAIL, testName + " FAILED");
         extentTest.log(Status.FAIL, result.getThrowable().getMessage());
 
-        WebDriverManager.stopTracingAndSave(testName);
-
-        try {
-            byte[] screenshotBytes = WebDriverManager.getPage()
-                    .screenshot(new com.microsoft.playwright.Page.ScreenshotOptions()
-                            .setFullPage(true));
-
-            String screenshotDir = "test-output/screenshots";
-            new File(screenshotDir).mkdirs();
-            String screenshotPath = screenshotDir + "/" + testName.replaceAll("[^a-zA-Z0-9]", "_") + ".png";
-            java.nio.file.Files.write(Paths.get(screenshotPath), screenshotBytes);
-
-            String base64Screenshot = Base64.getEncoder().encodeToString(screenshotBytes);
-            extentTest.fail("Screenshot:",
-                    MediaEntityBuilder.createScreenCaptureFromBase64String(base64Screenshot).build());
-
-            logger.error("FAILED: {} — Screenshot saved: {}", testName, screenshotPath);
-        } catch (Exception e) {
-            logger.error("FAILED: {} — Screenshot capture failed: {}", testName, e.getMessage());
+        if (hasActivePage()) {
+            WebDriverManager.stopTracingAndSave(testName);
+            captureScreenshot(testName, extentTest);
+        } else {
+            logger.error("FAILED: {} (API test — no screenshot)", testName);
         }
     }
 
@@ -91,6 +80,36 @@ public class TestListener implements ITestListener {
     @Override
     public void onFinish(ITestContext context) {
         logger.info("=== Test Suite Finished: {} ===", context.getName());
+    }
+
+    private void captureScreenshot(String testName, ExtentTest extentTest) {
+        try {
+            byte[] screenshotBytes = WebDriverManager.getPage()
+                    .screenshot(new com.microsoft.playwright.Page.ScreenshotOptions()
+                            .setFullPage(true));
+
+            String screenshotDir = "test-output/screenshots";
+            new File(screenshotDir).mkdirs();
+            String screenshotPath = screenshotDir + "/" + testName.replaceAll("[^a-zA-Z0-9]", "_") + ".png";
+            java.nio.file.Files.write(Paths.get(screenshotPath), screenshotBytes);
+
+            String base64Screenshot = Base64.getEncoder().encodeToString(screenshotBytes);
+            extentTest.fail("Screenshot:",
+                    MediaEntityBuilder.createScreenCaptureFromBase64String(base64Screenshot).build());
+
+            logger.error("FAILED: {} — Screenshot saved: {}", testName, screenshotPath);
+        } catch (Exception e) {
+            logger.error("FAILED: {} — Screenshot capture failed: {}", testName, e.getMessage());
+        }
+    }
+
+    private boolean hasActivePage() {
+        try {
+            Page page = WebDriverManager.getPage();
+            return page != null;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     private String getTestName(ITestResult result) {

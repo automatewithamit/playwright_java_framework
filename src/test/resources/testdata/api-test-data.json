@@ -1,0 +1,14 @@
+{
+  "createUserTests": [
+    {
+      "testName": "Create QA Engineer",
+      "name": "Jane Doe",
+      "job": "QA Engineer"
+    },
+    {
+      "testName": "Create Developer",
+      "name": "John Smith",
+      "job": "Software Developer"
+    }
+  ]
+}
