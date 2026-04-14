@@ -17,9 +17,9 @@ import java.util.Locale;
  *   Playwright + Browser  → shared, launched once per suite
  *   BrowserContext + Page  → isolated per thread/test via ThreadLocal
  */
-public class WebDriverManager {
+public class PlaywrightManager {
 
-    private static final Logger logger = LogManager.getLogger(WebDriverManager.class);
+    private static final Logger logger = LogManager.getLogger(PlaywrightManager.class);
 
     // Shared across all threads — launched once
     private static Playwright playwright;
@@ -28,11 +28,15 @@ public class WebDriverManager {
     // Isolated per thread — created per test
     private static final ThreadLocal<BrowserContext> contextThreadLocal = new ThreadLocal<>();
     private static final ThreadLocal<Page> pageThreadLocal = new ThreadLocal<>();
-
+    //final keyword ensures that the reference to the ThreadLocal object cannot be changed after initialization,
+    // providing thread safety for the context and page management.
     /**
      * Launches Playwright and Browser once for the entire suite.
      * Call this in @BeforeSuite.
      */
+    // Synchronized to prevent multiple threads from launching the browser simultaneously
+    //static synchronized method ensures that only one thread can execute the launchBrowser method at a time,
+    //preventing race conditions when multiple threads attempt to launch the browser simultaneously.
     public static synchronized void launchBrowser(String browserName) {
         if (browser != null) {
             return;
@@ -44,12 +48,15 @@ public class WebDriverManager {
 
         playwright = Playwright.create();
 
-        boolean headless = Boolean.parseBoolean(ConfigReader.getProperty("headless", "false"));
+        boolean headless = Boolean.parseBoolean(ConfigReader.getProperty("headless", "true"));
 
         BrowserType.LaunchOptions launchOptions = new BrowserType.LaunchOptions()
                 .setHeadless(headless)
-                .setSlowMo(500);
-
+                .setSlowMo(500)
+                .setArgs(List.of("--start-maximized"));
+        //Locale.ROOT ensures consistent case-insensitive comparison regardless of the system's locale settings
+        //for example, in Turkish locale, "I".toLowerCase() would return "ı" instead of "i", which could cause issues in browser name comparison.
+        //Using Locale.ROOT ensures that the case conversion behaves consistently across all locales.
         switch (browserName.toLowerCase(Locale.ROOT)) {
             case "chrome":
             case "chromium":
@@ -81,7 +88,7 @@ public class WebDriverManager {
         }
 
         BrowserContext context = browser.newContext(new Browser.NewContextOptions()
-                .setViewportSize(1920, 1080));
+                .setViewportSize(null));
         contextThreadLocal.set(context);
 
         if (Boolean.parseBoolean(ConfigReader.getProperty("tracing", "false"))) {

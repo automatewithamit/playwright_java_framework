@@ -3,7 +3,7 @@ package com.playwright.listeners;
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.MediaEntityBuilder;
 import com.aventstack.extentreports.Status;
-import com.playwright.core.WebDriverManager;
+import com.playwright.core.PlaywrightManager;
 import com.playwright.utils.ExtentManager;
 import com.microsoft.playwright.Page;
 import org.apache.logging.log4j.LogManager;
@@ -84,7 +84,7 @@ public class TestListener implements ITestListener {
 
     private void captureScreenshot(String testName, ExtentTest extentTest) {
         try {
-            byte[] screenshotBytes = WebDriverManager.getPage()
+            byte[] screenshotBytes = PlaywrightManager.getPage()
                     .screenshot(new com.microsoft.playwright.Page.ScreenshotOptions()
                             .setFullPage(true));
 

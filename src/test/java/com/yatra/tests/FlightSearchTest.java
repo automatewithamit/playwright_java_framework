@@ -1,6 +1,6 @@
 package com.yatra.tests;
 
-import com.playwright.core.WebDriverManager;
+import com.playwright.core.PlaywrightManager;
 import com.playwright.utils.ExtentManager;
 import com.playwright.utils.JsonDataReader;
 import com.aventstack.extentreports.Status;
@@ -28,7 +28,7 @@ public class FlightSearchTest extends BaseTest {
         int children = (int) data.get("children");
         int infants = (int) data.get("infants");
 
-        HomePage homePage = new HomePage(WebDriverManager.getPage());
+        HomePage homePage = new HomePage(PlaywrightManager.getPage());
         homePage.closeLoginPopupIfPresent();
 
         homePage.selectTab("Flights");
@@ -47,16 +47,16 @@ public class FlightSearchTest extends BaseTest {
                 "Passengers - Adults: " + adults + ", Children: " + children + ", Infants: " + infants);
 
         flightSearchPage.clickSearchFlights();
-        WebDriverManager.getPage().waitForTimeout(5000);
+        PlaywrightManager.getPage().waitForTimeout(5000);
 
-        FlightResultsPage resultsPage = new FlightResultsPage(WebDriverManager.getPage());
+        FlightResultsPage resultsPage = new FlightResultsPage(PlaywrightManager.getPage());
         Assert.assertTrue(resultsPage.areFlightResultsDisplayed(),
                 "Flight results should be displayed");
     }
 
     @Test
     public void testHotelSearch() {
-        HomePage homePage = new HomePage(WebDriverManager.getPage());
+        HomePage homePage = new HomePage(PlaywrightManager.getPage());
         homePage.closeLoginPopupIfPresent();
 
         homePage.selectTab("Hotels");
@@ -65,7 +65,7 @@ public class FlightSearchTest extends BaseTest {
 
     @Test
     public void testHolidayPackages() {
-        HomePage homePage = new HomePage(WebDriverManager.getPage());
+        HomePage homePage = new HomePage(PlaywrightManager.getPage());
         homePage.closeLoginPopupIfPresent();
 
         homePage.selectTab("Holiday Packages");

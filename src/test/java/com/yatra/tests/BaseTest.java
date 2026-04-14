@@ -1,6 +1,6 @@
 package com.yatra.tests;
 
-import com.playwright.core.WebDriverManager;
+import com.playwright.core.PlaywrightManager;
 import com.playwright.listeners.TestListener;
 import com.playwright.utils.ConfigReader;
 import com.playwright.utils.ExtentManager;
@@ -16,23 +16,23 @@ public class BaseTest {
     @BeforeSuite
     public void suiteSetup() {
         ExtentManager.initializeExtentReports();
-        WebDriverManager.launchBrowser(ConfigReader.getProperty("browser"));
+        PlaywrightManager.launchBrowser(ConfigReader.getProperty("browser"));
     }
 
     @BeforeMethod
     public void setUp() {
-        WebDriverManager.createContext();
-        WebDriverManager.navigateTo(ConfigReader.getProperty("url"));
+        PlaywrightManager.createContext();
+        PlaywrightManager.navigateTo(ConfigReader.getProperty("url"));
     }
 
     @AfterMethod
     public void tearDown() {
-        WebDriverManager.closeContext();
+        PlaywrightManager.closeContext();
     }
 
     @AfterSuite
     public void suiteTearDown() {
-        WebDriverManager.quitBrowser();
+        PlaywrightManager.quitBrowser();
         ExtentManager.flushReports();
     }
 }

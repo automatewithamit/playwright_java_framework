@@ -1,6 +1,6 @@
 package com.yatra.tests;
 
-import com.playwright.core.WebDriverManager;
+import com.playwright.core.PlaywrightManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.testng.Assert;
@@ -12,8 +12,8 @@ public class FrameworkValidationTest extends BaseTest {
 
     @Test
     public void validateFrameworkSetup() {
-        String title = WebDriverManager.getPage().title();
-        String currentUrl = WebDriverManager.getPage().url();
+        String title = PlaywrightManager.getPage().title();
+        String currentUrl = PlaywrightManager.getPage().url();
 
         logger.info("Page title: {}", title);
         logger.info("Current URL: {}", currentUrl);
