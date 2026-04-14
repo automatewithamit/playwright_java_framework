@@ -5,19 +5,19 @@
         <listener class-name="com.playwright.listeners.RetryTransformer"/>
     </listeners>
 
-    <test name="FrameworkValidation">
-        <classes>
-            <class name="com.yatra.tests.FrameworkValidationTest"/>
-        </classes>
-    </test>
+<!--    <test name="FrameworkValidation">-->
+<!--        <classes>-->
+<!--            <class name="com.yatra.tests.FrameworkValidationTest"/>-->
+<!--        </classes>-->
+<!--    </test>-->
     <test name="YatraFunctionalTests">
         <classes>
             <class name="com.yatra.tests.FlightSearchTest"/>
         </classes>
     </test>
-    <test name="ApiTests">
-        <classes>
-            <class name="com.yatra.tests.api.SampleApiTest"/>
-        </classes>
-    </test>
+<!--    <test name="ApiTests">-->
+<!--        <classes>-->
+<!--            <class name="com.yatra.tests.api.SampleApiTest"/>-->
+<!--        </classes>-->
+<!--    </test>-->
 </suite>

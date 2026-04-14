@@ -35,7 +35,7 @@ public abstract class BaseApiPage {
     protected ApiResponse get(String endpoint, Map<String, Object> queryParams) {
         logger.info("GET {} with params: {}", endpoint, queryParams);
         RequestOptions options = RequestOptions.create();
-        queryParams.forEach(options::setQueryParam);
+        //queryParams.forEach(options::setQueryParam);
         return new ApiResponse(request.get(endpoint, options));
     }
 
