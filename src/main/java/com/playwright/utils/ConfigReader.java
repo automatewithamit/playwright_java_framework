@@ -58,6 +58,7 @@ public class ConfigReader {
     }
 
     public static boolean isHeadless() {
+        System.out.println("Selecting Headless Parameter from Jenkins");
         return Boolean.parseBoolean(
                 System.getProperty("headless", "true"));
     }

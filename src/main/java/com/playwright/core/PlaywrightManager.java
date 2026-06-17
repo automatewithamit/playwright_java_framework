@@ -49,7 +49,8 @@ public class PlaywrightManager {
 
         playwright = Playwright.create();
 
-        boolean headless = Boolean.parseBoolean(ConfigReader.getProperty("headless", "true"));
+        //boolean headless = Boolean.parseBoolean(ConfigReader.getProperty("headless", "true"));
+        boolean headless = ConfigReader.isHeadless();
 
         BrowserType.LaunchOptions launchOptions = new BrowserType.LaunchOptions()
                 .setHeadless(headless)
