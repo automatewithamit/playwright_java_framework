@@ -16,12 +16,14 @@ public class BaseTest {
     @BeforeSuite
     public void suiteSetup() {
         ExtentManager.initializeExtentReports();
-        PlaywrightManager.launchBrowser(ConfigReader.getProperty("browser"));
+        String browserName = System.getProperty("brwoser");
+        PlaywrightManager.launchBrowser(browserName);
     }
 
     @BeforeMethod
     public void setUp() {
         PlaywrightManager.createContext();
+        System.getProperty("headless", "false");
         PlaywrightManager.navigateTo(ConfigReader.getProperty("url"));
     }
 

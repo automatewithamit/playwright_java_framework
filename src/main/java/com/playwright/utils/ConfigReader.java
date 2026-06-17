@@ -49,6 +49,23 @@ public class ConfigReader {
             throw new RuntimeException("Failed to load config file: " + e.getMessage());
         }
     }
+    public static String getBrowser() {
+        return System.getProperty("browser", "chromium");
+    }
+
+    public static String getEnvironment() {
+        return System.getProperty("env", "qa");
+    }
+
+    public static boolean isHeadless() {
+        return Boolean.parseBoolean(
+                System.getProperty("headless", "true"));
+    }
+
+    public static int getThreads() {
+        return Integer.parseInt(
+                System.getProperty("threads", "4"));
+    }
 
     public static String getProperty(String key) {
         String systemValue = System.getProperty(key);
@@ -71,7 +88,4 @@ public class ConfigReader {
         return properties.getProperty(key, defaultValue);
     }
 
-    public static String getEnvironment() {
-        return System.getProperty("env", "dev");
-    }
 }

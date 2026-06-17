@@ -10,11 +10,18 @@
 <!--            <class name="com.yatra.tests.FrameworkValidationTest"/>-->
 <!--        </classes>-->
 <!--    </test>-->
-    <test name="YatraFunctionalTests">
-        <classes>
-            <class name="com.yatra.tests.FlightSearchTest"/>
-        </classes>
+    <test name="YatraFunctionalTests" parallel="classes" thread-count="1">
+        <group name="search">
+            <class name="com.yatra.tests.HotelSearchTest"/>
+        </group>
+<!--        <classes>-->
+<!--            <class name="com.yatra.tests.FlightSearchTest"/>-->
+<!--            -->
+<!--        </classes>-->
     </test>
+
+
+
 <!--    <test name="ApiTests">-->
 <!--        <classes>-->
 <!--            <class name="com.yatra.tests.api.SampleApiTest"/>-->

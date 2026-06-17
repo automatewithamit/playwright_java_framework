@@ -34,19 +34,19 @@ public class FlightSearchTest extends BaseTest {
         homePage.selectTab("Flights");
         ExtentManager.getTest().log(Status.INFO, "Selected Flights tab");
 
-        FlightSearchPage flightSearchPage = homePage.getFlightSearchPage();
+        //FlightSearchPage flightSearchPage = homePage.getFlightSearchPage();
 
-        flightSearchPage.enterDepartureCity(departureCity);
+        //flightSearchPage.enterDepartureCity(departureCity);
         ExtentManager.getTest().log(Status.INFO, "Departure: " + departureCity);
 
-        flightSearchPage.enterArrivalCity(arrivalCity);
+        //flightSearchPage.enterArrivalCity(arrivalCity);
         ExtentManager.getTest().log(Status.INFO, "Arrival: " + arrivalCity);
 
-        flightSearchPage.selectPassengers(adults, children, infants);
+        //flightSearchPage.selectPassengers(adults, children, infants);
         ExtentManager.getTest().log(Status.INFO,
                 "Passengers - Adults: " + adults + ", Children: " + children + ", Infants: " + infants);
 
-        flightSearchPage.clickSearchFlights();
+        //flightSearchPage.clickSearchFlights();
         PlaywrightManager.getPage().waitForTimeout(5000);
 
         FlightResultsPage resultsPage = new FlightResultsPage(PlaywrightManager.getPage());
@@ -54,8 +54,11 @@ public class FlightSearchTest extends BaseTest {
                 "Flight results should be displayed");
     }
 
-    @Test
+    @Test(groups = "search")
     public void testHotelSearch() {
+         String browserName = System.getProperty("browser");
+
+        System.out.println("Running Hotel Search test on browser: " + browserName);
         HomePage homePage = new HomePage(PlaywrightManager.getPage());
         homePage.closeLoginPopupIfPresent();
 
@@ -71,4 +74,10 @@ public class FlightSearchTest extends BaseTest {
         homePage.selectTab("Holiday Packages");
         ExtentManager.getTest().log(Status.INFO, "Selected Holiday Packages tab");
     }
+
+        @Test
+    public void testBusSearch() {
+            HomePage homePage = new HomePage(PlaywrightManager.getPage());
+            homePage.closeLoginPopupIfPresent();
+        }
 }

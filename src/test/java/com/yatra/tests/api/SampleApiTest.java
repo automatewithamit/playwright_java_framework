@@ -17,7 +17,7 @@ import java.util.Map;
  */
 public class SampleApiTest extends BaseApiTest {
 
-    @Test
+    @Test(priority = 2)
     public void testGetUsers() {
         UserApi userApi = new UserApi(ApiRequestManager.getRequestContext());
 
@@ -28,7 +28,7 @@ public class SampleApiTest extends BaseApiTest {
         Assert.assertNotNull(response.jsonPath("data[0].email"));
     }
 
-    @Test
+    @Test(priority = 1)
     public void testGetUserById() {
         UserApi userApi = new UserApi(ApiRequestManager.getRequestContext());
 
@@ -44,7 +44,7 @@ public class SampleApiTest extends BaseApiTest {
         return JsonDataReader.getTestData("api-test-data.json", "createUserTests");
     }
 
-    @Test(dataProvider = "createUserData")
+    @Test(dataProvider = "createUserData",priority = 0)
     public void testCreateUser(Map<String, Object> data) {
         String name = (String) data.get("name");
         String job = (String) data.get("job");
@@ -60,7 +60,7 @@ public class SampleApiTest extends BaseApiTest {
         Assert.assertNotNull(response.jsonBody().get("id"));
     }
 
-    @Test
+    @Test(priority = 3)
     public void testUpdateUser() {
         UserApi userApi = new UserApi(ApiRequestManager.getRequestContext());
 
@@ -71,7 +71,7 @@ public class SampleApiTest extends BaseApiTest {
         Assert.assertEquals(response.jsonBody().get("name").asText(), "Updated Name");
     }
 
-    @Test
+    @Test(priority = 4)
     public void testDeleteUser() {
         UserApi userApi = new UserApi(ApiRequestManager.getRequestContext());
 

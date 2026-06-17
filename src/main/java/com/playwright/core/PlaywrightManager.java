@@ -90,15 +90,16 @@ public class PlaywrightManager {
 
         BrowserContext context = browser.newContext(new Browser.NewContextOptions()
                 .setViewportSize(null));
-        contextThreadLocal.set(context);
+
 
         if (Boolean.parseBoolean(ConfigReader.getProperty("tracing", "false"))) {
             context.tracing().start(new Tracing.StartOptions()
                     .setScreenshots(true)
                     .setSnapshots(true)
                     .setSources(false));
-        }
 
+        }
+        contextThreadLocal.set(context);
         Page page = context.newPage();
         pageThreadLocal.set(page);
 
