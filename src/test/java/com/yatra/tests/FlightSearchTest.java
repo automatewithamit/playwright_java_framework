@@ -15,13 +15,14 @@ import java.util.Map;
 
 public class FlightSearchTest extends BaseTest {
 
-    @DataProvider(name = "flightData")
-    public Object[][] flightData() {
-        return JsonDataReader.getTestData("flight-search.json", "flightSearchTests");
-    }
+//    @DataProvider(name = "flightData")
+//    public Object[][] flightData() {
+//        return JsonDataReader.getTestData("flight-search.json", "flightSearchTests");
+//    }
 
     @Test//(dataProvider = "flightData")
-    public void testFlightSearch(Map<String, Object> data) {
+    public void testFlightSearch() {
+    //public void testFlightSearch(Map<String, Object> data) {
 //        String departureCity = (String) data.get("departureCity");
 //        String arrivalCity = (String) data.get("arrivalCity");
 //        int adults = (int) data.get("adults");
