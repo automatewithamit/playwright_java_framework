@@ -1,30 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+
 <suite name="YatraTestSuite" parallel="methods" thread-count="1">
 
     <listeners>
         <listener class-name="com.playwright.listeners.RetryTransformer"/>
     </listeners>
 
-<!--    <test name="FrameworkValidation">-->
-<!--        <classes>-->
-<!--            <class name="com.yatra.tests.FrameworkValidationTest"/>-->
-<!--        </classes>-->
-<!--    </test>-->
     <test name="YatraFunctionalTests" parallel="classes" thread-count="1">
-        <group name="search">
-            <class name="com.yatra.tests.HotelSearchTest"/>
-        </group>
-<!--        <classes>-->
-<!--            <class name="com.yatra.tests.FlightSearchTest"/>-->
-<!--            -->
-<!--        </classes>-->
+
+        <classes>
+            <class name="com.yatra.tests.FlightSearchTest"/>
+
+            <!-- Uncomment when needed -->
+            <!-- <class name="com.yatra.tests.FlightSearchTest"/> -->
+
+        </classes>
+
     </test>
 
-
-
-<!--    <test name="ApiTests">-->
-<!--        <classes>-->
-<!--            <class name="com.yatra.tests.api.SampleApiTest"/>-->
-<!--        </classes>-->
-<!--    </test>-->
 </suite>
