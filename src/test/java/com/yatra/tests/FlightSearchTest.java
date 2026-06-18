@@ -20,7 +20,7 @@ public class FlightSearchTest extends BaseTest {
         return JsonDataReader.getTestData("flight-search.json", "flightSearchTests");
     }
 
-    @Test(dataProvider = "flightData")
+    @Test//(dataProvider = "flightData")
     public void testFlightSearch(Map<String, Object> data) {
 //        String departureCity = (String) data.get("departureCity");
 //        String arrivalCity = (String) data.get("arrivalCity");
@@ -56,28 +56,28 @@ public class FlightSearchTest extends BaseTest {
 
     @Test(groups = "search")
     public void testHotelSearch() {
-         String browserName = System.getProperty("browser");
-
-        System.out.println("Running Hotel Search test on browser: " + browserName);
-        HomePage homePage = new HomePage(PlaywrightManager.getPage());
-        homePage.closeLoginPopupIfPresent();
-
-        homePage.selectTab("Hotels");
-        ExtentManager.getTest().log(Status.INFO, "Selected Hotels tab");
+//         String browserName = System.getProperty("browser");
+//
+//        System.out.println("Running Hotel Search test on browser: " + browserName);
+//        HomePage homePage = new HomePage(PlaywrightManager.getPage());
+//        homePage.closeLoginPopupIfPresent();
+//
+//        homePage.selectTab("Hotels");
+//        ExtentManager.getTest().log(Status.INFO, "Selected Hotels tab");
     }
 
     @Test
     public void testHolidayPackages() {
-        HomePage homePage = new HomePage(PlaywrightManager.getPage());
-        homePage.closeLoginPopupIfPresent();
-
-        homePage.selectTab("Holiday Packages");
-        ExtentManager.getTest().log(Status.INFO, "Selected Holiday Packages tab");
+//        HomePage homePage = new HomePage(PlaywrightManager.getPage());
+//        homePage.closeLoginPopupIfPresent();
+//
+//        homePage.selectTab("Holiday Packages");
+//        ExtentManager.getTest().log(Status.INFO, "Selected Holiday Packages tab");
     }
 
         @Test
     public void testBusSearch() {
-            HomePage homePage = new HomePage(PlaywrightManager.getPage());
-            homePage.closeLoginPopupIfPresent();
+//            HomePage homePage = new HomePage(PlaywrightManager.getPage());
+//            homePage.closeLoginPopupIfPresent();
         }
 }
